@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>India Geo-Spatial NCD Health Intelligence Dashboard</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;600;800&display=swap">
+<style>
+:root{--bg:#f1f5f4;--panel:#fff;--ink:#12302f;--mut:#58706e;--line:#d3dedc;--hi:#b3265e;--lo:#1f6f8b;--bm:#12302f;--acc:#0f766e;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1a19;--panel:#15272526;--ink:#e6f0ee;--mut:#98b0ad;--line:#2a403d;--hi:#ef6a9a;--lo:#5fb4d1;--bm:#e6f0ee;--acc:#4fd1c0}}
+:root[data-theme="dark"]{--bg:#0e1a19;--panel:#152725;--ink:#e6f0ee;--mut:#98b0ad;--line:#2a403d;--hi:#ef6a9a;--lo:#5fb4d1;--bm:#e6f0ee;--acc:#4fd1c0}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Schibsted Grotesk",system-ui,sans-serif}
+header{padding:28px 20px 12px;max-width:1100px;margin:auto}
+h1{font-size:clamp(22px,4vw,34px);margin:0 0 4px;font-weight:800;letter-spacing:-.02em}
+header p{margin:0;color:var(--mut);max-width:70ch}
+nav{display:flex;gap:6px;overflow-x:auto;max-width:1100px;margin:12px auto 0;padding:0 20px 8px;border-bottom:1px solid var(--line)}
+nav button{flex:none;border:0;background:none;color:var(--mut);font:600 14px inherit;font-family:inherit;padding:8px 12px;border-radius:8px;cursor:pointer}
+nav button[aria-selected=true]{background:var(--ink);color:var(--bg)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+main{max-width:1100px;margin:auto;padding:20px}
+section{display:none}section.on{display:block}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
+.kpi b{display:block;font-size:34px;font-weight:800;letter-spacing:-.02em}
+.kpi span{color:var(--mut);font-size:13px}
+h2{font-size:19px;margin:22px 0 6px}h3{margin:0 0 10px;font-size:15px}
+.note{color:var(--mut);font-size:13px;margin:6px 0 0}
+.row{display:grid;grid-template-columns:150px 1fr 56px;gap:10px;align-items:center;margin:8px 0}
+.row label{font-size:13px}
+.track{position:relative;height:22px;background:color-mix(in srgb,var(--line) 50%,transparent);border-radius:4px}
+.bar{height:100%;border-radius:4px;transition:width .35s}
+.bm{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--bm)}
+.row output{font-weight:600;text-align:right}
+.ctl{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:12px;align-items:end}
+.ctl label{display:flex;flex-direction:column;font-size:12px;color:var(--mut);gap:3px}
+select{font:inherit;padding:6px 8px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{color:var(--mut);font-weight:600;cursor:pointer}
+.pos{color:var(--hi);font-weight:600}.neg{color:var(--lo);font-weight:600}
+.leg{display:flex;gap:14px;font-size:12px;color:var(--mut);margin-top:8px;flex-wrap:wrap}
+.leg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px}
+.sl{display:grid;grid-template-columns:140px 1fr 40px;gap:10px;align-items:center;margin:6px 0;font-size:13px}
+input[type=range]{width:100%;accent-color:var(--acc)}
+.moi{font-size:48px;font-weight:800;letter-spacing:-.03em}
+.tier{display:inline-block;padding:3px 10px;border-radius:99px;background:var(--ink);color:var(--bg);font-weight:600;font-size:13px}
+.mx{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.row{grid-template-columns:100px 1fr 48px}.mx{grid-template-columns:1fr}}
+.cell{cursor:pointer;text-align:left;font:inherit;color:inherit;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}
+.cell[aria-pressed=true]{border-color:var(--acc);box-shadow:0 0 0 2px var(--acc)}
+.cell small{color:var(--mut);display:block}
+</style></head><body>
+<header>
+<h1>India Geo-Spatial NCD Health Intelligence Dashboard</h1>
+<p>NFHS-5 district-level health burden, service coverage and pharmaceutical market opportunity, 2019–21.</p>
+</header>
+<nav role="tablist" id="tabs"></nav>
+<main>
+
+<section id="overview">
+<div class="grid" id="kpis"></div>
+<h2>India benchmark: blood sugar and blood pressure</h2>
+<div class="card" id="g1"></div>
+<p class="note">Adults 15+ with high/very high blood sugar or elevated BP, or taking medication. Source: NFHS-5 India factsheet.</p>
+<div class="card" style="margin-top:14px"><h3>Key insight</h3>Elevated blood pressure is more common than high blood sugar nationally, and men are higher than women on both. The dashboard compares districts on both indicators to show geographic variation.</div>
+</section>
+
+<section id="district">
+<div class="ctl">
+<label>Sort by<select id="sort"><option value="d">Highest first</option><option value="a">Lowest first</option><option value="n">District name</option></select></label>
+<label>State<select id="state"></select></label>
+</div>
+<div class="card"><h3>Men with high/very high blood sugar or medication (%)</h3><div id="g2"></div>
+<div class="leg"><span><i style="background:var(--hi)"></i>Above India benchmark</span><span><i style="background:var(--lo)"></i>Below benchmark</span><span><i style="background:var(--bm)"></i>India 15.6%</span></div></div>
+<h2>District table</h2>
+<div class="card tw"><table id="tbl"></table></div>
+<p class="note">Sample validation districts from the working file. Women's values missing for four districts (—). Replace with the full course dataset for final submission. Rank is computed live from the values shown, as RANKX would.</p>
+</section>
+
+<section id="bp">
+<div class="ctl"><label>Group<select id="grp"><option value="both">Women and men</option><option value="w">Women</option><option value="m">Men</option></select></label></div>
+<div class="card"><h3>Blood pressure benchmark, India (%)</h3><div id="g3"></div></div>
+<div class="grid" style="margin-top:14px" id="bpk"></div>
+<p class="note">NFHS-5 national benchmark among adults 15+; the baseline for district hypertension comparisons.</p>
+</section>
+
+<section id="moi">
+<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+<div class="card">
+<h3>Market Opportunity Index (MOI) calculator</h3>
+<div class="ctl"><label>District<select id="md"></select></label></div>
+<div class="sl"><span>NCD burden score</span><input type="range" id="s1" min="0" max="100"><output id="o1"></output></div>
+<div class="sl"><span>Coverage gap</span><input type="range" id="s2" min="0" max="100"><output id="o2"></output></div>
+<div class="sl"><span>Risk factor score</span><input type="range" id="s3" min="0" max="100"><output id="o3"></output></div>
+<p class="note">Burden starts from the district's men's blood sugar scaled to the highest sample value. Coverage gap and risk are placeholders: adjust them, or load real data.</p>
+</div>
+<div class="card"><h3>Result</h3><div class="moi" id="mv"></div><span class="tier" id="mt"></span>
+<p class="note">MOI = 50% NCD burden + 30% coverage gap + 20% risk factor.</p>
+<div id="mb"></div></div>
+</div>
+<h2>Priority tiers</h2>
+<div class="card tw"><table><tr><th>MOI</th><th>Priority for further assessment</th></tr><tr><td>80+</td><td>Very high</td></tr><tr><td>60–79</td><td>High</td></tr><tr><td>40–59</td><td>Moderate</td></tr><tr><td>Below 40</td><td>Lower</td></tr></table></div>
+</section>
+
+<section id="act">
+<p class="note" style="margin-top:0">Select a situation to see the finding and the recommended action.</p>
+<div class="mx" id="mx"></div>
+<div class="card" style="margin-top:14px" id="mxr"></div>
+<h2>Coverage indicators to load</h2>
+<div class="card tw"><table><tr><th>Indicator</th><th>Unit</th><th>Reading</th></tr>
+<tr><td>Health insurance / financing</td><td>%</td><td>Higher = better coverage</td></tr>
+<tr><td>Institutional births</td><td>%</td><td>Higher = better coverage</td></tr>
+<tr><td>Mothers with 4+ ANC visits</td><td>%</td><td>Higher = better coverage</td></tr>
+<tr><td>Fully vaccinated children</td><td>%</td><td>Higher = better coverage</td></tr>
+<tr><td>Overweight / obesity</td><td>%</td><td>Higher = higher risk</td></tr>
+<tr><td>Tobacco use</td><td>%</td><td>Higher = higher risk</td></tr></table></div>
+</section>
+</main>
+<script>
+const $=s=>document.querySelector(s);
+const D=[["Rajasthan","Udaipur",8.8,10.5],["Tamil Nadu","Perambalur",21.0,23.2],["Uttar Pradesh","Baghpat",null,12.7],["Maharashtra","Nashik",null,12.0],["Kerala","Malappuram",null,23.9]];
+const IM=15.6,IW=13.5;
+const tabs=[["overview","Overview"],["district","Districts"],["bp","Blood pressure"],["moi","Opportunity (MOI)"],["act","Action matrix"]];
+$("#tabs").innerHTML=tabs.map((t,i)=>`<button role="tab" data-t="${t[0]}" aria-selected="${i==0}">${t[1]}</button>`).join("");
+function show(id){document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id==id));document.querySelectorAll("#tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.t==id))}
+$("#tabs").onclick=e=>{if(e.target.dataset.t)show(e.target.dataset.t)};show("overview");
+const bar=(l,v,max,c,bm)=>`<div class="row"><label>${l}</label><div class="track"><div class="bar" style="width:${v/max*100}%;background:${c}"></div>${bm!=null?`<div class="bm" style="left:${bm/max*100}%"></div>`:""}</div><output>${v.toFixed(1)}%</output></div>`;
+$("#kpis").innerHTML=[["Survey period","2019–21"],["Women: high blood sugar","13.5%"],["Men: high blood sugar","15.6%"],["Women: elevated BP","21.3%"],["Men: elevated BP","24.0%"]].map(k=>`<div class="card kpi"><b>${k[1]}</b><span>${k[0]}</span></div>`).join("");
+$("#g1").innerHTML=bar("Women: blood sugar",13.5,28,"var(--acc)")+bar("Men: blood sugar",15.6,28,"var(--acc)")+bar("Women: elevated BP",21.3,28,"var(--lo)")+bar("Men: elevated BP",24.0,28,"var(--lo)");
+// districts
+$("#state").innerHTML='<option value="">All states</option>'+D.map(d=>`<option>${d[0]}</option>`).join("");
+function rank(){return [...D].sort((a,b)=>b[3]-a[3]).map(d=>d[1])}
+function draw(){let r=D.filter(d=>!$("#state").value||d[0]==$("#state").value);const s=$("#sort").value;
+r.sort((a,b)=>s=="d"?b[3]-a[3]:s=="a"?a[3]-b[3]:a[1].localeCompare(b[1]));
+$("#g2").innerHTML=r.map(d=>bar(d[1]+", "+d[0],d[3],28,d[3]>IM?"var(--hi)":"var(--lo)",IM)).join("")||"<p class=note>No districts for this filter.</p>";
+const rk=rank();
+$("#tbl").innerHTML="<tr><th>Rank</th><th>State</th><th>District</th><th>Women %</th><th>Men %</th><th>Variance vs India</th></tr>"+r.map(d=>{const v=(d[3]-IM)/IM*100;return`<tr><td>${rk.indexOf(d[1])+1}</td><td>${d[0]}</td><td>${d[1]}</td><td>${d[2]??"—"}</td><td>${d[3]}</td><td class="${v>0?"pos":"neg"}">${v>0?"+":""}${v.toFixed(1)}%</td></tr>`}).join("")+`<tr><td></td><td>India</td><td>Benchmark</td><td>${IW}</td><td>${IM}</td><td></td></tr>`}
+$("#sort").onchange=$("#state").onchange=draw;draw();
+// bp
+const BP={w:[["Mildly elevated",12.4],["Moderately/severely elevated",5.2],["Elevated or on medication",21.3]],m:[["Mildly elevated",15.7],["Moderately/severely elevated",5.7],["Elevated or on medication",24.0]]};
+function bpd(){const g=$("#grp").value,gs=g=="both"?["w","m"]:[g],nm={w:"Women",m:"Men"};
+$("#g3").innerHTML=gs.map(k=>`<h3 style="margin-top:8px">${nm[k]}</h3>`+BP[k].map(x=>bar(x[0],x[1],28,k=="w"?"var(--acc)":"var(--lo)")).join("")).join("");
+$("#bpk").innerHTML=gs.map(k=>`<div class="card kpi"><b>${BP[k][2][1].toFixed(1)}%</b><span>${nm[k]}: elevated BP or medication</span></div>`).join("")}
+$("#grp").onchange=bpd;bpd();
+// MOI
+$("#md").innerHTML=D.map((d,i)=>`<option value="${i}">${d[1]}, ${d[0]}</option>`).join("");
+const mx=Math.max(...D.map(d=>d[3]));
+function setM(){const d=D[$("#md").value];$("#s1").value=Math.round(d[3]/mx*100);$("#s2").value=50;$("#s3").value=50;calc()}
+function calc(){const a=+$("#s1").value,b=+$("#s2").value,c=+$("#s3").value;$("#o1").value=a;$("#o2").value=b;$("#o3").value=c;
+const m=.5*a+.3*b+.2*c;$("#mv").textContent=m.toFixed(1);
+$("#mt").textContent=m>=80?"Very high":m>=60?"High":m>=40?"Moderate":"Lower";
+$("#mb").innerHTML=[["Burden ×50%",.5*a],["Coverage gap ×30%",.3*b],["Risk ×20%",.2*c]].map(x=>bar(x[0],x[1],50,"var(--acc)").replace(/\.\d%/,"").replace("%","")).join("")}
+$("#md").onchange=setM;["#s1","#s2","#s3"].forEach(s=>$(s).oninput=calc);setM();
+// matrix
+const M=[["High NCD + high coverage gap","Healthcare priority area","Screening and service-strengthening"],["High NCD + good coverage","Established healthcare demand","Monitor therapy and medicine availability"],["Low NCD + high coverage gap","Potential under-service","Improve screening and access"],["Low NCD + good coverage","Lower immediate burden","Maintain routine monitoring"]];
+$("#mx").innerHTML=M.map((m,i)=>`<button class="cell" data-i="${i}" aria-pressed="${i==0}"><b>${m[0]}</b><small>${m[1]}</small></button>`).join("");
+function sm(i){document.querySelectorAll(".cell").forEach(c=>c.setAttribute("aria-pressed",c.dataset.i==i));$("#mxr").innerHTML=`<h3>${M[i][0]}</h3><p><b>Finding:</b> ${M[i][1]}</p><p style="margin:0"><b>Action:</b> ${M[i][2]}</p>`}
+$("#mx").onclick=e=>{const c=e.target.closest(".cell");if(c)sm(c.dataset.i)};sm(0);
+</script></body></html>
